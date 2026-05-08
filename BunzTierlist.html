@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BunzTierlist</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1117;--sur:#181c27;--sur2:#1e2333;--sur3:#252a3a;
+  --bor:#2a2f42;--txt:#e8eaf2;--mut:#6b7194;--mut2:#4a5070;
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+
+nav{background:var(--sur);border-bottom:1px solid var(--bor);position:sticky;top:0;z-index:100}
+.nav-in{max-width:920px;margin:0 auto;padding:0 14px;height:54px;display:flex;align-items:center;gap:10px}
+.logo{font-family:'Rajdhani',sans-serif;font-size:21px;font-weight:700;letter-spacing:.04em;text-decoration:none;flex-shrink:0}
+.logo .c{color:#42c9e8}.logo .t{color:var(--txt)}
+.sw{flex:1;position:relative;max-width:320px;margin-left:auto}
+.sw svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--mut);pointer-events:none}
+.sw input{width:100%;background:var(--sur2);border:1px solid var(--bor);border-radius:999px;padding:7px 12px 7px 32px;font-family:'Nunito',sans-serif;font-size:13px;color:var(--txt);outline:none;transition:border-color .2s}
+.sw input::placeholder{color:var(--mut)}
+.sw input:focus{border-color:#42c9e8}
+.nav-r{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.abtn{display:flex;align-items:center;gap:5px;background:var(--sur2);color:var(--mut);border:1px solid var(--bor);border-radius:8px;padding:6px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s}
+.abtn:hover{color:var(--txt);border-color:var(--mut2)}
+.abtn.on{color:#42c9e8;border-color:#42c9e842;background:#42c9e811}
+.addbtn{display:none;align-items:center;gap:5px;background:#42c9e8;color:#0a0d14;border:none;border-radius:8px;padding:6px 12px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;transition:opacity .15s}
+.addbtn:hover{opacity:.85}
+.addbtn.show{display:flex}
+
+.mtabs{background:var(--sur);border-bottom:1px solid var(--bor)}
+.mtabs-in{max-width:920px;margin:0 auto;padding:0 14px;display:flex;overflow-x:auto;scrollbar-width:none}
+.mtabs-in::-webkit-scrollbar{display:none}
+.mtab{display:flex;align-items:center;gap:6px;padding:11px 14px;border:none;background:none;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--mut);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;transition:color .15s,border-color .15s}
+.mtab:hover{color:var(--txt)}
+.mtab.on{color:var(--txt);border-bottom-color:var(--mc,#42c9e8)}
+
+.ttabs{max-width:920px;margin:14px auto 0;padding:0 14px;display:flex;gap:5px;flex-wrap:wrap}
+.ttab{padding:4px 12px;border-radius:999px;border:1px solid var(--bor);background:transparent;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--mut);cursor:pointer;transition:all .15s}
+.ttab:hover{color:var(--txt);border-color:var(--mut2)}
+.ttab.on{color:#0a0d14;border-color:transparent}
+
+main{max-width:920px;margin:0 auto;padding:16px 14px 80px}
+
+.tg{margin-bottom:24px;opacity:0;transform:translateY(8px);animation:fu .3s forwards}
+@keyframes fu{to{opacity:1;transform:translateY(0)}}
+.tg-hd{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.tpill{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;padding:3px 9px;border-radius:5px;color:#0a0d14}
+.tlabel{font-size:13px;font-weight:600;color:var(--mut)}
+.tcount{font-size:12px;color:var(--mut2);margin-left:auto}
+
+.plist{display:flex;flex-direction:column;gap:4px}
+.pc{background:var(--sur);border:1px solid var(--bor);border-radius:11px;display:flex;align-items:center;overflow:hidden;transition:border-color .15s,transform .12s}
+.pc:hover{border-color:var(--sur3);transform:translateX(2px)}
+.pstripe{width:4px;align-self:stretch;flex-shrink:0}
+.prank{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;color:var(--mut2);min-width:40px;text-align:center;flex-shrink:0}
+.prank.g{color:#f5c842}.prank.s{color:#c0c8d8}.prank.b{color:#c47a3a}
+.av{width:44px;height:44px;border-radius:7px;background:var(--sur3);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-right:11px}
+.av img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.av-fb{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--mut);display:none;align-items:center;justify-content:center;width:100%;height:100%}
+.pinfo{flex:1;min-width:0}
+.pname{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdisc{font-size:11px;color:var(--mut);margin-top:1px}
+.pr{display:flex;align-items:center;gap:7px;padding-right:12px;flex-shrink:0}
+.tbadge{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.06em;padding:3px 8px;border-radius:5px;color:#0a0d14}
+.rmbtn{background:none;border:none;color:var(--mut2);cursor:pointer;padding:4px;border-radius:4px;display:flex;transition:color .12s}
+.rmbtn:hover{color:#e05252}
+
+.empty{background:var(--sur);border:1px dashed var(--bor);border-radius:11px;padding:16px;text-align:center;color:var(--mut2);font-size:13px}
+.nores{text-align:center;padding:70px 20px;color:var(--mut);font-size:14px}
+.nores big{display:block;font-size:34px;margin-bottom:10px}
+
+.ov{display:none;position:fixed;inset:0;background:rgba(5,7,15,.78);backdrop-filter:blur(5px);z-index:200;align-items:center;justify-content:center}
+.ov.open{display:flex}
+.modal{background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:26px 22px;width:370px;max-width:calc(100vw - 28px);box-shadow:0 28px 80px rgba(0,0,0,.7)}
+.mtitle{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;margin-bottom:5px;letter-spacing:.04em}
+.msub{font-size:12px;color:var(--mut);margin-bottom:18px}
+.modal label{display:block;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:5px;margin-top:13px}
+.modal label:first-of-type{margin-top:0}
+.modal input,.modal select{width:100%;background:var(--sur2);border:1px solid var(--bor);border-radius:7px;padding:9px 11px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--txt);outline:none;transition:border-color .15s;-webkit-appearance:none}
+.modal input:focus,.modal select:focus{border-color:#42c9e8}
+.modal input.err{border-color:#e05252}
+.errmsg{font-size:12px;color:#e05252;margin-top:7px;min-height:15px}
+.mact{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+.btn{padding:8px 16px;border-radius:7px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;border:none;transition:opacity .15s}
+.btn:hover{opacity:.8}
+.bg{background:var(--sur3);color:var(--txt)}
+.bp{background:#42c9e8;color:#0a0d14}
+.bd{background:#e05252;color:#fff}
+
+.abadge{display:inline-flex;align-items:center;gap:4px;background:#42c9e811;border:1px solid #42c9e842;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:700;color:#42c9e8}
+.apanel-body{display:flex;flex-direction:column;gap:11px;margin-top:4px}
+.asec{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.arow{display:flex;align-items:center;justify-content:space-between;background:var(--sur2);border-radius:9px;padding:11px 13px}
+.arow-info{font-size:13px;font-weight:700}
+.arow-info span{display:block;font-size:11px;color:var(--mut);font-weight:400;margin-top:2px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <a class="logo" href="#"><span class="c">BUNZ</span><span class="t">TIERLIST</span></a>
+    <div class="sw">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="sInput" placeholder="Search player..." oninput="renderAll()">
+    </div>
+    <div class="nav-r">
+      <button class="abtn" id="adminBtn" onclick="openAdminGate()">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span id="adminLbl">Admin</span>
+      </button>
+      <button class="addbtn" id="addBtn" onclick="openAdd()">
+        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Add
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="mtabs"><div class="mtabs-in" id="modeTabs"></div></div>
+<div class="ttabs" id="tierTabs"></div>
+<main id="main"></main>
+
+<!-- Login -->
+<div class="ov" id="loginOv">
+  <div class="modal">
+    <div class="mtitle">Admin Login</div>
+    <div class="msub">Enter the admin password to manage players.</div>
+    <label>Password</label>
+    <input type="password" id="pwInput" placeholder="••••••••" autocomplete="off">
+    <div class="errmsg" id="pwErr"></div>
+    <div class="mact">
+      <button class="btn bg" onclick="closeOv('loginOv')">Cancel</button>
+      <button class="btn bp" onclick="doLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Player -->
+<div class="ov" id="addOv">
+  <div class="modal">
+    <div class="mtitle">Add Player</div>
+    <div class="msub"><span class="abadge">✦ Admin</span></div>
+    <label>Minecraft Username</label>
+    <input type="text" id="pName" placeholder="Notch" autocomplete="off">
+    <label>Mode</label>
+    <select id="pMode"></select>
+    <label>Tier</label>
+    <select id="pTier"></select>
+    <label>Discord <span style="font-size:9px;font-weight:400;text-transform:none">(optional)</span></label>
+    <input type="text" id="pDisc" placeholder="user#0000">
+    <div class="mact">
+      <button class="btn bg" onclick="closeOv('addOv')">Cancel</button>
+      <button class="btn bp" onclick="doAdd()">Add Player</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Panel -->
+<div class="ov" id="panelOv">
+  <div class="modal">
+    <div class="mtitle">Admin Panel</div>
+    <div class="msub"><span class="abadge">✦ Logged in as Admin</span></div>
+    <div class="apanel-body">
+      <div>
+        <div class="asec">Session</div>
+        <div class="arow">
+          <div class="arow-info">Administrator<span>Full access to add & remove players</span></div>
+          <button class="btn bd" onclick="doLogout()">Logout</button>
+        </div>
+      </div>
+      <div>
+        <div class="asec">Quick Actions</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn bp" onclick="closeOv('panelOv');openAdd()">+ Add Player</button>
+          <button class="btn bg" onclick="closeOv('panelOv')">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var PW = 'AlexanderStrydom';
+var isAdmin = false;
+
+var MODES = [
+  {id:'crystal',label:'Crystal',icon:'💎',color:'#42c9e8'},
+  {id:'mace', label:'Mace', icon:'🪓',color:'#e8824a'},
+  {id:'sword', label:'Sword', icon:'⚔️', color:'#e84a4a'},
+  {id:'axe', label:'Axe', icon:'🪓',color:'#a0e84a'},
+  {id:'uhc', label:'UHC', icon:'❤️', color:'#e8c44a'},
+  {id:'pot', label:'Pot', icon:'🧪',color:'#c84ae8'},
+];
+
+var TIERS = [
+  {id:'HT1',label:'High Tier 1',color:'#f5c842'},
+  {id:'LT1',label:'Low Tier 1', color:'#d4a832'},
+  {id:'HT2',label:'High Tier 2',color:'#9b82f0'},
+  {id:'LT2',label:'Low Tier 2', color:'#7b62d0'},
+  {id:'HT3',label:'High Tier 3',color:'#42c98a'},
+  {id:'LT3',label:'Low Tier 3', color:'#2da870'},
+  {id:'HT4',label:'High Tier 4',color:'#42a8e0'},
+  {id:'LT4',label:'Low Tier 4', color:'#2888c0'},
+  {id:'HT5',label:'High Tier 5',color:'#8892aa'},
+  {id:'LT5',label:'Low Tier 5', color:'#636d85'},
+];
+
+var players = {
+  crystal:[
+    {name:'Xen_', tier:'HT1',discord:'xen#0001'},
+    {name:'Pyrox', tier:'HT1',discord:'pyrox#4412'},
+    {name:'Veltrix',tier:'LT1',discord:''},
+    {name:'Kaze', tier:'HT2',discord:'kaze#2209'},
+    {name:'Crux', tier:'LT2',discord:'crux#8831'},
+  ],
+  mace:[],sword:[],axe:[],uhc:[],pot:[]
+};
+
+var curMode = 'crystal';
+var curTier = 'ALL';
+
+// build selects
+var pmSel = document.getElementById('pMode');
+MODES.forEach(function(m){
+  var o = document.createElement('option');
+  o.value = m.id; o.textContent = m.icon+' '+m.label;
+  pmSel.appendChild(o);
+});
+var ptSel = document.getElementById('pTier');
+TIERS.forEach(function(t){
+  var o = document.createElement('option');
+  o.value = t.id; o.textContent = t.id+' — '+t.label;
+  ptSel.appendChild(o);
+});
+
+function rc(r){return r===1?'g':r===2?'s':r===3?'b':'';}
+
+function renderModeTabs(){
+  var h='';
+  MODES.forEach(function(m){
+    var a=curMode===m.id;
+    h+='<button class="mtab'+(a?' on':'')+'" style="'+(a?'--mc:'+m.color:'')+'" onclick="setMode(\''+m.id+'\')">'+
+       '<span>'+m.icon+'</span>'+m.label+'</button>';
+  });
+  document.getElementById('modeTabs').innerHTML=h;
+}
+
+function setMode(id){curMode=id;curTier='ALL';renderModeTabs();renderTierTabs();renderAll();}
+
+function renderTierTabs(){
+  var mc=MODES.find(function(m){return m.id===curMode;});
+  var h='<button class="ttab'+(curTier==='ALL'?' on':'')+'" style="'+(curTier==='ALL'?'background:'+mc.color+';':'')+'" onclick="setTier(\'ALL\')">All</button>';
+  TIERS.forEach(function(t){
+    var a=curTier===t.id;
+    h+='<button class="ttab'+(a?' on':'')+'" style="'+(a?'background:'+t.color+';':'')+'" onclick="setTier(\''+t.id+'\')">'+t.id+'</button>';
+  });
+  document.getElementById('tierTabs').innerHTML=h;
+}
+
+function setTier(id){curTier=id;renderTierTabs();renderAll();}
+
+function renderAll(){
+  var q=document.getElementById('sInput').value.toLowerCase().trim();
+  var mp=players[curMode]||[];
+  var ts=curTier==='ALL'?TIERS:TIERS.filter(function(t){return t.id===curTier;});
+  var html='';var any=false;
+
+  ts.forEach(function(tier,gi){
+    var tp=mp.filter(function(p){return p.tier===tier.id;});
+    if(q) tp=tp.filter(function(p){return p.name.toLowerCase().indexOf(q)>-1||(p.discord&&p.discord.toLowerCase().indexOf(q)>-1);});
+    if(q&&tp.length===0) return;
+    any=true;
+
+    var cards=tp.length===0
+      ?'<div class="empty">No players in '+tier.id+' yet'+(isAdmin?' — tap Add above':' '+'')+'</div>'
+      :tp.map(function(p,i){
+        var safeName=p.name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        var rmHtml=isAdmin?'<button class="rmbtn" onclick="doRemove(\''+curMode+'\',\''+safeName+'\')">'
+          +'<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">'
+          +'<path d="M18 6 6 18M6 6l12 12"/></svg></button>':'';
+        return '<div class="pc">'
+          +'<div class="pstripe" style="background:'+tier.color+'"></div>'
+          +'<div class="prank '+rc(i+1)+'">'+(i+1)+'</div>'
+          +'<div class="av">'
+          +'<img src="https://mc-heads.net/avatar/'+encodeURIComponent(p.name)+'/44" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'flex\'" alt="">'
+          +'<div class="av-fb">'+p.name.slice(0,2).toUpperCase()+'</div>'
+          +'</div>'
+          +'<div class="pinfo">'
+          +'<div class="pname">'+p.name+'</div>'
+          +(p.discord?'<div class="pdisc">'+p.discord+'</div>':'')
+          +'</div>'
+          +'<div class="pr">'
+          +'<span class="tbadge" style="background:'+tier.color+'">'+tier.id+'</span>'
+          +rmHtml
+          +'</div>'
+          +'</div>';
+      }).join('');
+
+    html+='<div class="tg" style="animation-delay:'+(gi*.04)+'s">'
+      +'<div class="tg-hd">'
+      +'<span class="tpill" style="background:'+tier.color+'">'+tier.id+'</span>'
+      +'<span class="tlabel">'+tier.label+'</span>'
+      +'<span class="tcount">'+tp.length+' player'+(tp.length!==1?'s':'')+'</span>'
+      +'</div>'
+      +'<div class="plist">'+cards+'</div>'
+      +'</div>';
+  });
+
+  if(!any){
+    var curModeObj=MODES.find(function(m){return m.id===curMode;});
+    html=q
+      ?'<div class="nores"><big>🔍</big>No players matching "'+q+'"</div>'
+      :'<div class="nores"><big>'+curModeObj.icon+'</big>No players added yet</div>';
+  }
+  document.getElementById('main').innerHTML=html;
+}
+
+function openAdminGate(){
+  if(isAdmin){openOv('panelOv');return;}
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwErr').textContent='';
+  document.getElementById('pwInput').classList.remove('err');
+  openOv('loginOv');
+  setTimeout(function(){document.getElementById('pwInput').focus();},80);
+}
+
+function doLogin(){
+  var pw=document.getElementById('pwInput').value;
+  if(pw===PW){
+    isAdmin=true;
+    closeOv('loginOv');
+    document.getElementById('adminBtn').classList.add('on');
+    document.getElementById('adminLbl').textContent='Admin ✦';
+    document.getElementById('addBtn').classList.add('show');
+    renderAll();
+    openOv('panelOv');
+  } else {
+    document.getElementById('pwErr').textContent='Incorrect password.';
+    document.getElementById('pwInput').classList.add('err');
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+function doLogout(){
+  isAdmin=false;
+  closeOv('panelOv');
+  document.getElementById('adminBtn').classList.remove('on');
+  document.getElementById('adminLbl').textContent='Admin';
+  document.getElementById('addBtn').classList.remove('show');
+  renderAll();
+}
+
+function openAdd(){
+  if(!isAdmin) return;
+  document.getElementById('pMode').value=curMode;
+  document.getElementById('pName').value='';
+  document.getElementById('pDisc').value='';
+  openOv('addOv');
+  setTimeout(function(){document.getElementById('pName').focus();},80);
+}
+
+function doAdd(){
+  var name=document.getElementById('pName').value.trim();
+  var mode=document.getElementById('pMode').value;
+  var tier=document.getElementById('pTier').value;
+  var disc=document.getElementById('pDisc').value.trim();
+  if(!name){document.getElementById('pName').focus();return;}
+  players[mode].push({name:name,tier:tier,discord:disc});
+  curMode=mode;curTier='ALL';
+  closeOv('addOv');
+  renderModeTabs();renderTierTabs();renderAll();
+}
+
+function doRemove(mode,name){
+  var idx=players[mode].findIndex(function(p){return p.name===name;});
+  if(idx>-1){players[mode].splice(idx,1);renderAll();}
+}
+
+function openOv(id){document.getElementById(id).classList.add('open');}
+function closeOv(id){document.getElementById(id).classList.remove('open');}
+
+['loginOv','addOv','panelOv'].forEach(function(id){
+  document.getElementById(id).addEventListener('click',function(e){
+    if(e.target===e.currentTarget) closeOv(id);
+  });
+});
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){['loginOv','addOv','panelOv'].forEach(function(id){closeOv(id);});}
+  if(e.key==='Enter'&&document.getElementById('loginOv').classList.contains('open')) doLogin();
+});
+
+renderModeTabs();
+renderTierTabs();
+renderAll();
+</script>
+</body>
+</html>
